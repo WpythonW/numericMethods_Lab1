@@ -8,7 +8,10 @@ int main() {
     ifstream inFile;
     inFile.open("matrix.txt");
     inFile >> n;
-    double A[n][n], d[n], P[n], Q[n], X[n];
+    double** A = new double* [n];
+    for (int i = 0; i < n; i++)
+        A[i] = new double[n];
+    double* d = new double[n], * P = new double[n], * Q = new double[n], * X = new double[n];
     char ch;
     for (int i = 0; i<n; i++){
         inFile >> A[i][0];
