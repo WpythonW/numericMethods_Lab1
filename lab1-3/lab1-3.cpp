@@ -132,7 +132,7 @@ int main() {
 
     double *b = new double[n], *X_iter = new double[n], *X_Seidel = new double[n];
 
-    input_matrix(A, b); //Ввол матрицы
+    input_matrix(A, b); //Ввод матрицы
 
     for (int i = 0; i < n; i++){
         double elem = A[i][i];
