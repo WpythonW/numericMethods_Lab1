@@ -8,7 +8,7 @@ ifstream inFile;
 int n;
 double Cnorm = 0, CnormVect = 0, eps;
 
-void input_matrix(double **A, double *b){
+void input_matrix(double** A, double* b) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++)
         {
@@ -25,7 +25,7 @@ void input_matrix(double **A, double *b){
     //cout << "\n";
 }
 
-void check_conditions(double **A, double *b){
+void check_conditions(double** A, double* b) {
     double summ1 = 0, norm1 = 0, summ2 = 0, Csumm = 0;
 
     for (int i = 0; i < n; i++) {
@@ -48,7 +48,7 @@ void check_conditions(double **A, double *b){
 
     if (norm1 >= 1 && sqrt(summ2) >= 1 && Cnorm >= 1)
     {
-        cout << "norm > 1";
+        cout << "norm > 1 => Sufficient condition not met\n";
         exit(0);
     }
 }
@@ -60,9 +60,9 @@ void print(double* X) {
     cout << "\n";
 }
 
-double* iterations_method(double** A, double* b){
+double* iterations_method(double** A, double* b) {
     int k = 0;
-    double *X = new double[n], *oldX = new double[n], norm = 0;
+    double* X = new double[n], * oldX = new double[n], norm = 0;
     copy(b, b + n, oldX);
     double epsK, s = 0;
     do {
@@ -99,7 +99,7 @@ double* seidel_method(double** A, double* b) {
                     s += A[i][j] * X[j];
                 else {
                     s += A[i][j] * oldX[j];
-                    if(norm_upper == 0) summ += abs(A[i][j]);
+                    if (norm_upper == 0) summ += abs(A[i][j]);
                 }
 
             }
@@ -121,7 +121,7 @@ double* seidel_method(double** A, double* b) {
     return X;
 }
 
-int main() {    
+int main() {
     inFile.open("matrix.txt");
     inFile >> eps;
     inFile >> n;
@@ -130,33 +130,33 @@ int main() {
     for (int i = 0; i < n; i++)
         A[i] = new double[n];
 
-    double *b = new double[n], *X_iter = new double[n], *X_Seidel = new double[n];
+    double* b = new double[n], * X_iter = new double[n], * X_Seidel = new double[n];
 
     input_matrix(A, b); //Ввод матрицы
 
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < n; i++) {
         double elem = A[i][i];
-        for (int j = 0; j < n; j++){
+        for (int j = 0; j < n; j++) {
             A[i][j] = -A[i][j] / elem;
             if (i == j)
                 A[i][j] = 0;
-        //cout << A[i][j] << " ";
+            //cout << A[i][j] << " ";
         }
         b[i] = b[i] / elem;
-        //cout << b[i] << " ";
-        //cout << "\n";
-    }   
+    }
     // приведение к эквивалентному виду
     check_conditions(A, b); //проверка на достаточное условие
 
     k = (log(eps) - log(CnormVect) + log(1 - Cnorm)) / log(Cnorm) - 1;
-    cout << k << "\n";
+    cout << "a priori estimate of the number of iterations k: " << k << "\n";
 
     X_iter = iterations_method(A, b);
+    cout << "Vector X found by iterations method\n";
     print(X_iter);
 
     cout << "\n";
 
     X_Seidel = seidel_method(A, b);
+    cout << "Vector X found by Seidel method\n";
     print(X_Seidel);
 }
