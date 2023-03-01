@@ -7,6 +7,7 @@ using namespace std;
 ifstream inFile;
 int n;
 double Cnorm = 0, CnormVect = 0, eps;
+bool conditions = false;
 
 void input_matrix(double** A, double* b) {
     for (int i = 0; i < n; i++) {
@@ -49,7 +50,7 @@ void check_conditions(double** A, double* b) {
     if (norm1 >= 1 && sqrt(summ2) >= 1 && Cnorm >= 1)
     {
         cout << "norm > 1 => Sufficient condition not met\n";
-        exit(0);
+        conditions = true;
     }
 }
 
@@ -64,7 +65,8 @@ double* iterations_method(double** A, double* b) {
     int k = 0;
     double* X = new double[n], * oldX = new double[n], norm = 0;
     copy(b, b + n, oldX);
-    double epsK, s = 0;
+    double epsK, s = 0, coeff = (Cnorm / (1 - Cnorm));
+    if (conditions) coeff = 1;
     do {
         k++;
         for (int i = 0; i < n; i++) {
@@ -77,12 +79,12 @@ double* iterations_method(double** A, double* b) {
             if (norm < abs(X[i] - oldX[i]))
                 norm = abs(X[i] - oldX[i]);
         }
-        epsK = (Cnorm / (1 - Cnorm)) * norm;
+        epsK = coeff * norm;
         copy(X, X + n, oldX);
         norm = 0;
         //cout << epsK << "\n";
     } while (epsK > eps);
-
+    cout << "Iterations method converged in " << k << " iterations\n";
     return X;
 }
 
@@ -90,7 +92,19 @@ double* seidel_method(double** A, double* b) {
     int k = 0;
     double* X = new double[n], * oldX = new double[n], norm = 0, norm_upper = 0, summ = 0;
     copy(b, b + n, oldX);
-    double epsK, s = 0;
+    double epsK, s = 0, coeff;
+    if (conditions) {
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                summ += abs(A[i][j]);
+            }
+            if (norm_upper < summ)
+                norm_upper = summ;
+        }
+        coeff = (norm_upper / (1 - Cnorm));
+    }
+    else coeff = 1;
+
     do {
         k++;
         for (int i = 0; i < n; i++) {
@@ -99,7 +113,6 @@ double* seidel_method(double** A, double* b) {
                     s += A[i][j] * X[j];
                 else {
                     s += A[i][j] * oldX[j];
-                    if (norm_upper == 0) summ += abs(A[i][j]);
                 }
 
             }
@@ -108,16 +121,15 @@ double* seidel_method(double** A, double* b) {
 
             if (norm < abs(X[i] - oldX[i]))
                 norm = abs(X[i] - oldX[i]);
-            if (norm_upper < summ && norm_upper == 0)
-                norm_upper = summ;
+            
         }
-        epsK = (norm_upper / (1 - Cnorm)) * norm;
+        epsK = coeff * norm;
         copy(X, X + n, oldX);
         norm = 0;
         //cout << epsK << "\n";
         //print(X);
     } while (epsK > eps);
-
+    cout << "Seidel method converged in " << k << " iterations\n";
     return X;
 }
 
