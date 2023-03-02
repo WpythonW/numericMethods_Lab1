@@ -26,7 +26,7 @@ void print(double** M) {
     cout << "\n";
 }
 
-void LUP(double** A, double** E, double* p, double* b) {
+void LUP(double** A, double** E, int* p, double* b) {
     double det = 1;
     int count = 0;
     double* z = new double[n], * x = new double[n];
@@ -48,11 +48,13 @@ void LUP(double** A, double** E, double* p, double* b) {
         if (pivotValue != 0) {
             //меняем местами i-ю строку и строку с опорным элементом
             swap(p[pivot], p[i]);
-            //swap(b[pivot], b[i]);
+            swap(b[pivot], b[i]);
             swap_rows(A, pivot, i);
             count++;
         }
+    }
 
+    for (int i = 0; i < n; i++){
         double elem = A[i][i];
         double coeff;
         for (int j = i + 1; j < n; j++) {
@@ -69,7 +71,7 @@ void LUP(double** A, double** E, double* p, double* b) {
     }
     det *= pow(-1, count);
 
-    print(A);
+    //print(A);
 
     for (int i = 0; i < n; i++) {
         double s = 0;
@@ -84,6 +86,9 @@ void LUP(double** A, double** E, double* p, double* b) {
         for (int k = i + 1; k < n; k++)
             s += x[k] * A[i][k];
         x[i] = (z[i] - s) / ui;
+    }
+
+    for (int i = 0; i < n; i++) {
         cout << x[i] << " ";
     }
 
@@ -94,7 +99,8 @@ int main() {
     inFile.open("matrix.txt");
     inFile >> n;
     double** A = new double* [n], **E = new double* [n];
-    double* b = new double[n], *p = new double[n];
+    double* b = new double[n];
+    int *p = new int[n];
     for (int i = 0; i < n; i++) {
         A[i] = new double[n];
         E[i] = new double[n];
