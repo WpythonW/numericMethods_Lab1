@@ -19,7 +19,7 @@ void print(double** M) {
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++) {
-            cout << round(M[i][j]*10000)/10000 << setw(5);
+            cout << round(M[i][j]*10000)/10000 << setw(10);
         }
         cout << "\n";
     }
@@ -30,9 +30,11 @@ void LUP(double** A, double** E, int* p, double* b) {
     double det = 1;
     int count = 0;
     double* z = new double[n], * x = new double[n];
+    double** C = new double* [n];
     for (int i = 0; i < n; i++) {
         z[i] = 0;
         x[i] = 0;
+        C[i] = new double[n];
     }
 
     for (int i = 0; i < n; i++) {
@@ -63,9 +65,8 @@ void LUP(double** A, double** E, int* p, double* b) {
                 if (k >= i)
                     A[j][k] = A[j][k] - A[i][k] * coeff; //Условие здесь, чтобы не залезать на матрицу L
                 E[j][k] = E[j][k] - E[i][k] * coeff;
-                A[j][i] = coeff;
             }
-            
+            A[j][i] = coeff;
         }
         det *= A[i][i];
     }
@@ -88,10 +89,28 @@ void LUP(double** A, double** E, int* p, double* b) {
         x[i] = (z[i] - s) / ui;
     }
 
+    cout << "X = ( ";
     for (int i = 0; i < n; i++) {
         cout << x[i] << " ";
     }
-
+    cout << ")\n";
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = n-1; j > -1; j--) {
+            double ui = A[j][j];
+            double s = 0;
+            for (int k = j + 1; k < n; k++) {
+                s += E[k][p[i]] * A[j][k];
+            }
+            E[j][p[i]] = (E[j][p[i]] - s) / ui;
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            C[j][p[i]] = E[j][i];
+        }
+    }
+    print(C);
 }
 
 int main() {
