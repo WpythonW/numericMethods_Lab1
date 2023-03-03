@@ -26,7 +26,7 @@ void print(double** M) {
     cout << "\n";
 }
 
-void LUP(double** A, double** E, int* p, double* b) {
+void pulDecomp(double** A, double** E, int* p, double* b) {
     double det = 1;
     int count = 0;
     double* z = new double[n], * x = new double[n];
@@ -39,19 +39,19 @@ void LUP(double** A, double** E, int* p, double* b) {
 
     for (int i = 0; i < n; i++) {
         //поиск опорного элемента
-        double pivotValue = 0;
-        int pivot = -1;
+        double SuppElem = 0;
+        int baseIndex = -1;
         for (int row = i; row < n; row++) {
-            if (fabs(A[row][i]) > pivotValue) {
-                pivotValue = fabs(A[row][i]);
-                pivot = row;
+            if (fabs(A[row][i]) > SuppElem) {
+                SuppElem = fabs(A[row][i]);
+                baseIndex = row;
             }
         }
-        if (pivotValue != 0) {
+        if (SuppElem != 0) {
             //меняем местами i-ю строку и строку с опорным элементом
-            swap(p[pivot], p[i]);
-            swap(b[pivot], b[i]);
-            swap_rows(A, pivot, i);
+            swap(p[baseIndex], p[i]);
+            swap(b[baseIndex], b[i]);
+            swap_rows(A, baseIndex, i);
             count++;
         }
     }
@@ -143,7 +143,5 @@ int main() {
     }
     cout << "\n\n";
 
-    LUP(A, E, p, b);
-
-
+    pulDecomp(A, E, p, b);
 }
